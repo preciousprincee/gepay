@@ -1,13 +1,11 @@
-# ignore ALL .log files
+# Ignore all .log files
 *.log
 
-# ignore ALL files in ANY directory named temp
+# Ignore all files in any directory named temp
 temp/
-echo '__pycache__/' >> .gitignore
-<<<<<<< HEAD
-git rm --cached -r sleekpay/__pycache__
-git add .gitignore
-git commit -m "Remove __pycache__ and add to .gitignore"
-=======
-echo 'myenv/' >> .gitignore
->>>>>>> 9f13075 (first commit)
+
+# Ignore Python cache files
+__pycache__/
+
+# Ignore the virtual environment directory
+myenv/
