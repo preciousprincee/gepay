@@ -1,3 +1,4 @@
+{% load static %}
 {% load tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -6,158 +7,87 @@
     {% tailwind_css %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sleekpay - The Future of Finance & Data</title>
-    <link href="https://fonts.googleapis.com/css2?family=Solaris+One:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>{% block title %} Transfer {% endblock %}</title>
+    <!-- Include Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'tailwind.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var accountBalance = parseFloat("{{ account_balance }}");
+
+            $('#transferForm').submit(function(event) {
+                event.preventDefault();
+                var transferAmount = parseFloat($('#amount').val());
+
+                if (transferAmount > accountBalance) {
+                    $('#errorMessage').removeClass('hidden');
+                } else {
+                    $('#errorMessage').addClass('hidden');
+                    this.submit();
+                }
+            });
+        });
+    </script>
     <style>
         body {
-            background-color: #0a0f24;
-            color: #e0e6ed;
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: 'Roboto', sans-serif;
         }
         .neon-text {
-            color: #60a5fa;
-            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.4), 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
         }
-        .glow-button {
-            background: linear-gradient(45deg, #1a73e8, #1e40af);
-            box-shadow: 0 4px 20px rgba(26, 115, 232, 0.5);
+        .card-bg {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .error-message {
+            color: red;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-<!-- Navbar -->
-<nav class="bg-transparent py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <a href="{% url 'index' %}" class="text-3xl font-bold neon-text" style="font-family: 'Solaris One', sans-serif;">
-            <!-- <i class="fas fa-wallet mr-2"></i>-->Sleekpay 
-        </a>
-        <div class="space-x-8 hidden md:flex">
-            <a href="#features" class="text-lg hover:text-indigo-400"><i class="fas fa-star mr-1"></i>Features</a>
-            <a href="#pricing" class="text-lg hover:text-indigo-400"><i class="fas fa-tags mr-1"></i>Pricing</a>
-            <a href="#testimonials" class="text-lg hover:text-indigo-400"><i class="fas fa-comment-dots mr-1"></i>Testimonials</a>
-            <a href="#contact" class="text-lg hover:text-indigo-400"><i class="fas fa-envelope mr-1"></i>Contact</a>
-        </div>
-        <div class="flex items-center space-x-4">
-            {% if user.is_authenticated %}
-                <span class="text-lg font-medium text-indigo-200">Hello, {{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="text-lg hover:text-red-400">Logout</a>
-            {% else %}
-                <a href="{% url 'register' %}" class="px-6 py-2 bg-indigo-600 text-white rounded-md glow-button hover:bg-indigo-700">Sign Up</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="text-center py-20 bg-gradient-to-b from-black to-indigo-900">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-5xl font-bold neon-text">Unlock the Future of Finance</h1>
-        <p class="mt-4 text-2xl text-gray-300">Get 1GB data for just N280 on all networks, and enjoy cutting-edge financial services.</p>
-        {% if user.is_authenticated %}
-            <!-- Display 'Get Started' button for authenticated users -->
-            <a href="{% url 'index' %}" class="mt-8 inline-block px-8 py-4 bg-blue-500 text-white text-xl font-semibold rounded-md glow-button hover:bg-blue-700">Go to Dashboard</a>
-        {% else %}
-            <!-- Display 'Join Now' button for non-authenticated users -->
-            <a href="{% url 'register' %}" class="mt-8 inline-block px-8 py-4 bg-blue-500 text-white text-xl font-semibold rounded-md glow-button hover:bg-blue-700">Join Now - It’s Free!</a>
-        {% endif %}
-    </div>
-    <!-- Hero Image -->
-    <!-- <img src="your-image-url-here" alt="Futuristic Finance" class="mt-12 mx-auto w-3/4 rounded-lg shadow-lg" /> -->
-</section>
-
-<!-- Features Section -->
-<section id="features" class="py-16 bg-indigo-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-bold neon-text">Features</h2>
-        <p class="mt-4 text-lg text-gray-300">Discover the powerful features that make our app stand out.</p>
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="flex flex-col items-center">
-                <i class="fas fa-signal fa-3x mb-4 text-blue-500"></i>
-                <h3 class="text-2xl font-semibold">Affordable Data Plans</h3>
-                <p class="mt-2 text-gray-300">Get 1GB for N280 on all networks, the best data rates you can find.</p>
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white w-full py-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between px-6">
+            <div class="flex items-center">
+                <a href="/transfer" class="text-white text-3xl hover:text-gray-200 transition duration-300 ease-in-out mr-4">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h2 class="text-2xl font-bold">Transfer to Recipient</h2>
             </div>
-            <div class="flex flex-col items-center">
-                <i class="fas fa-university fa-3x mb-4 text-blue-500"></i>
-                <h3 class="text-2xl font-semibold">Banking Services</h3>
-                <p class="mt-2 text-gray-300">Seamless banking services, including transfers, bill payments, and more.</p>
-            </div>
-            <div class="flex flex-col items-center">
-                <i class="fas fa-lock fa-3x mb-4 text-blue-500"></i>
-                <h3 class="text-2xl font-semibold">Secure Transactions</h3>
-                <p class="mt-2 text-gray-300">Your transactions are protected with top-tier security protocols.</p>
-            </div>
+            <a href="/" class="text-2xl hover:text-gray-200 transition duration-300 ease-in-out" title="Home">
+                <i class="fa-solid fa-home"></i>
+            </a>
         </div>
-    </div>
-</section>
+    </header>
 
-<!-- Pricing Section -->
-<section id="pricing" class="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-bold neon-text">Pricing</h2>
-        <p class="mt-4 text-lg text-gray-300">Simple and affordable pricing for everyone.</p>
-        <div class="mt-10 flex justify-center">
-            <div class="bg-black p-8 shadow-lg rounded-lg text-center">
-                <h3 class="text-2xl font-semibold text-gray-100">1GB Data</h3>
-                <div class="mt-4 text-6xl font-bold text-blue-500">N280</div>
-                <p class="mt-2 text-gray-300">Valid for all networks</p>
-                <a href="{% url 'register' %}" class="mt-8 inline-block px-8 py-4 bg-blue-600 text-white font-semibold rounded-md glow-button hover:bg-blue-700">Get Started</a>
+    <!-- Main Content -->
+    <main class="container mx-auto mt-8 p-4 flex flex-col items-center">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg card-bg">
+            <div class="flex items-center mb-6">
+                <img class="rounded-full w-16 h-16 border-2 border-fc62db" src="{% static 'images/avatars/blank-profile-picture.png' %}" alt="Recipient's Avatar">
+                <h3 class="text-lg font-semibold neon-text ml-4">{{ recipient_username }}</h3>
             </div>
+
+            <form id="transferForm" method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="amount" class="block text-sm font-medium neon-text mb-2">Amount</label>
+                    <input name="transfer" type="number" id="amount" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-fc62db" required>
+                </div>
+
+                <p id="accountBalance" class="text-sm font-medium mb-4 neon-text">Account Balance: ₦{{ account_balance }}</p>
+                <p id="errorMessage" class="error-message text-red-500 font-medium hidden">Insufficient balance!</p>
+
+                <button id="transferButton" type="submit" class="bg-fc62db text-white px-4 py-2 rounded-md hover:bg-fc62db-dark transition duration-300 w-full">Transfer</button>
+            </form>
         </div>
-    </div>
-</section>
+    </main>
 
-<!-- Testimonials Section -->
-<section id="testimonials" class="py-16 bg-indigo-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-bold neon-text">What Our Users Say</h2>
-        <p class="mt-4 text-lg text-gray-300">Hear from satisfied customers.</p>
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
-                <i class="fas fa-user-circle fa-2x text-blue-500 mb-4"></i>
-                <p class="text-lg text-gray-200">“This app is a game-changer! I save so much money on data, and the banking features are top-notch.”</p>
-                <p class="mt-4 font-semibold text-gray-400">- John Doe</p>
-            </div>
-            <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
-                <i class="fas fa-user-circle fa-2x text-blue-500 mb-4"></i>
-                <p class="text-lg text-gray-200">“Getting 1GB for N280 is incredible. Plus, the app is easy to use and very reliable.”</p>
-                <p class="mt-4 font-semibold text-gray-400">- Jane Smith</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Call to Action Section -->
-<section id="register" class="py-16 bg-gradient-to-b from-indigo-900 to-black text-center">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-4xl font-bold neon-text">Ready to Get Started?</h2>
-        <p class="mt-4 text-xl text-gray-300">Join thousands of users saving on data and managing their finances with ease.</p>
-        {% if user.is_authenticated %}
-            <!-- Direct to dashboard for authenticated users -->
-            <a href="{% url 'index' %}" class="mt-8 inline-block px-8 py-4 bg-blue-600 text-white text-xl font-semibold rounded-md glow-button hover:bg-blue-700">Start Using App</a>
-        {% else %}
-            <!-- Signup call to action for non-authenticated users -->
-            <a href="{% url 'register' %}" class="mt-8 inline-block px-8 py-4 bg-blue-600 text-white text-xl font-semibold rounded-md glow-button hover:bg-blue-700">Sign Up Now</a>
-        {% endif %}
-    </div>
-    <!-- Call to Action Image -->
-    <!-- <img src="your-image-url-here" alt="Futuristic Signup" class="mt-12 mx-auto w-3/4 rounded-lg shadow-lg" /> -->
-</section>
-
-<!-- Footer -->
-<footer class="bg-black py-8 text-center text-gray-400">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p>&copy; 2024 Sleekpay. All rights reserved.</p>
-        <div class="mt-4 space-x-6">
-            <a href="#" class="hover:text-gray-200">Privacy Policy</a>
-            <a href="#" class="hover:text-gray-200">Terms of Service</a>
-            <a href="#" class="hover:text-gray-200">Contact Us</a>
-        </div>
-    </div>
-</footer>
-
+   
 </body>
 </html>
